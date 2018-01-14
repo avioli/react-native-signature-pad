@@ -24,11 +24,6 @@ class SignaturePad extends Component {
   };
 
   static defaultProps = {
-    onChange: () => {
-    },
-    onError: () => {
-
-    },
     style: {}
   };
 
@@ -98,16 +93,16 @@ class SignaturePad extends Component {
   };
 
   _bridged_jsError = (args) => {
-    this.props.onError({details: args});
+    if (this.props.onError) this.props.onError({details: args});
   };
 
   _bridged_finishedStroke = ({base64DataUrl}) => {
-    this.props.onChange({base64DataUrl});
+    if (this.props.onChange) this.props.onChange({base64DataUrl});
     this.setState({base64DataUrl});
   };
 
   _renderError = (args) => {
-    this.props.onError({details: args});
+    if (this.props.onError) this.props.onError({details: args});
   };
 
   _renderLoading = (args) => {
