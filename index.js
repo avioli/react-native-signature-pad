@@ -10,8 +10,7 @@ import htmlContent from './injectedHtml';
 import injectedSignaturePad from './injectedJavaScript/signaturePad';
 import injectedApplication from './injectedJavaScript/application';
 
-class SignaturePad extends Component {
-
+export default class SignaturePad extends Component {
   static propTypes = {
     onChange: PropTypes.func,
     onError: PropTypes.func,
@@ -26,7 +25,7 @@ class SignaturePad extends Component {
     backgroundColor: 'inherit'
   };
 
-  constructor(props) {
+  constructor (props) {
     super(props);
 
     this.state = {
@@ -68,7 +67,7 @@ class SignaturePad extends Component {
     //applewebdata://4985ECDA-4C2B-4E37-87ED-0070D14EB985#executeFunction=jsError&arguments=%7B%22message%22:%22ReferenceError:%20Can't%20find%20variable:%20WHADDUP%22,%22url%22:%22applewebdata://4985ECDA-4C2B-4E37-87ED-0070D14EB985%22,%22line%22:340,%22column%22:10%7D"
     //All parameters to the native world are passed via a hash url where every parameter is passed as &[ParameterName]<-[Content]&
     var hashUrlIndex = newUrl.lastIndexOf('#');
-    if(hashUrlIndex === -1) {
+    if (hashUrlIndex === -1) {
       return;
     }
 
@@ -78,7 +77,7 @@ class SignaturePad extends Component {
 
     var parameters = {};
     var parameterMatch = regexFindAllSubmittedParameters.exec(hashUrl);
-    if(!parameterMatch) {
+    if (!parameterMatch) {
       return;
     }
 
@@ -86,24 +85,24 @@ class SignaturePad extends Component {
       var parameterPair = parameterMatch[1]; //For example executeFunction=jsError or arguments=...
 
       var parameterPairSplit = parameterPair.split('<-');
-      if(parameterPairSplit.length === 2) {
+      if (parameterPairSplit.length === 2) {
         parameters[parameterPairSplit[0]] = parameterPairSplit[1];
       }
 
       parameterMatch = regexFindAllSubmittedParameters.exec(hashUrl);
     }
 
-    if(!this._attemptToExecuteNativeFunctionFromWebViewMessage(parameters)) {
+    if (!this._attemptToExecuteNativeFunctionFromWebViewMessage(parameters)) {
       logger.warn({parameters, hashUrl}, 'Received an unknown set of parameters from WebView');
     }
   };
 
   _attemptToExecuteNativeFunctionFromWebViewMessage = (message) => {
-    if(message.executeFunction && message.arguments) {
+    if (message.executeFunction && message.arguments) {
       var parsedArguments = JSON.parse(message.arguments);
 
       var referencedFunction = this['_bridged_' + message.executeFunction];
-      if(typeof(referencedFunction) === 'function') {
+      if (typeof(referencedFunction) === 'function') {
         referencedFunction.apply(this, [parsedArguments]);
         return true;
       }
@@ -129,17 +128,17 @@ class SignaturePad extends Component {
 
   };
 
-  render = () => {
+  render () {
     return (
-        <WebView automaticallyAdjustContentInsets={false}
-                 onNavigationStateChange={this._onNavigationChange}
-                 renderError={this._renderError}
-                 renderLoading={this._renderLoading}
-                 source={this.source}
-                 javaScriptEnabled={true}
-                 style={this.props.style}/>
+      <WebView
+        automaticallyAdjustContentInsets={false}
+        onNavigationStateChange={this._onNavigationChange}
+        renderError={this._renderError}
+        renderLoading={this._renderLoading}
+        source={this.source}
+        javaScriptEnabled={true}
+        style={this.props.style}
+      />
     )
-  };
+  }
 }
-
-module.exports = SignaturePad;
