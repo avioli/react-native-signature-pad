@@ -4,7 +4,17 @@ export default function ({ penColor, backgroundColor, dataURL }) {
     window.postMessage(JSON.stringify({ message, url, line, column, error }));
   };
 
-  var showSignaturePad = function (signaturePadCanvas, bodyWidth, bodyHeight) {
+  var bodyWidth = document.body.clientWidth;
+  var bodyHeight = document.body.clientHeight;
+  if(!bodyWidth) {
+    bodyWidth = window.innerWidth;
+  }
+  if(!bodyHeight) {
+    bodyHeight = window.innerHeight;
+  }
+
+  var canvasElement = document.querySelector('canvas');
+  {
     /*We're rotating by 90% -> Flip X and Y*/
     /*var width = bodyHeight;
     var height = bodyWidth;*/
@@ -16,9 +26,9 @@ export default function ({ penColor, backgroundColor, dataURL }) {
       var devicePixelRatio = 1; /*window.devicePixelRatio || 1;*/
       var canvasWidth = width * devicePixelRatio;
       var canvasHeight = height * devicePixelRatio;
-      signaturePadCanvas.width = canvasWidth;
-      signaturePadCanvas.height = canvasHeight;
-      signaturePadCanvas.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
+      canvasElement.width = canvasWidth;
+      canvasElement.height = canvasHeight;
+      canvasElement.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
     };
 
     var finishedStroke = function(base64DataUrl) {
@@ -26,7 +36,7 @@ export default function ({ penColor, backgroundColor, dataURL }) {
     };
 
     var enableSignaturePadFunctionality = function () {
-      var signaturePad = new SignaturePad(signaturePadCanvas, {
+      var signaturePad = new SignaturePad(canvasElement, {
         penColor: '${penColor || 'black'}',
         backgroundColor: '${backgroundColor || 'white'}',
         onEnd: sendBase64DataUrl
@@ -46,20 +56,7 @@ export default function ({ penColor, backgroundColor, dataURL }) {
 
     sizeSignaturePad();
     enableSignaturePadFunctionality();
-  };
-
-
-  var bodyWidth = document.body.clientWidth;
-  var bodyHeight = document.body.clientHeight;
-  if(!bodyWidth) {
-    bodyWidth = window.innerWidth;
   }
-  if(!bodyHeight) {
-    bodyHeight = window.innerHeight;
-  }
-
-  var canvasElement = document.querySelector('canvas');
-  showSignaturePad(canvasElement, bodyWidth, bodyHeight);
 
   function sendBase64DataUrl () {
     var payload = {
