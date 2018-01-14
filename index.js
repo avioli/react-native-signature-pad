@@ -8,7 +8,6 @@ import {
   StyleSheet,
 } from 'react-native';
 
-
 import htmlContent from './injectedHtml';
 import injectedSignaturePad from './injectedJavaScript/signaturePad';
 import injectedApplication from './injectedJavaScript/application';
@@ -21,22 +20,44 @@ class SignaturePad extends Component {
     style: ViewPropTypes.style,
     penColor: PropTypes.string,
     dataURL: PropTypes.string,
+    backgroundColor: PropTypes.string,
   };
 
   static defaultProps = {
-    style: {}
+    style: {},
+    backgroundColor: 'inherit'
   };
 
   constructor(props) {
     super(props);
-    this.state = {base64DataUrl: props.dataURL || null};
-    const { backgroundColor } = StyleSheet.flatten(props.style);
-    var injectedJavaScript = injectedSignaturePad + injectedApplication(
-      props.penColor,
+
+    this.state = {
+      base64DataUrl: props.dataURL || null
+    };
+
+    let {
+      style,
       backgroundColor,
-      props.dataURL);
-    var html = htmlContent(injectedJavaScript);
-    this.source = {html}; //We don't use WebView's injectedJavaScript because on Android, the WebView re-injects the JavaScript upon every url change. Given that we use url changes to communicate signature changes to the React Native app, the JS is re-injected every time a stroke is drawn.
+      penColor,
+      dataURL
+    } = props;
+
+    if (backgroundColor === 'inherit') {
+      backgroundColor = StyleSheet.flatten(style);
+    }
+
+    var injectedJavaScript = injectedSignaturePad + injectedApplication(
+      penColor,
+      backgroundColor,
+      dataURL);
+
+    // We don't use WebView's injectedJavaScript because on Android, the WebView
+    // re-injects the JavaScript upon every url change. Given that we use url
+    // changes to communicate signature changes to the React Native app, the JS
+    // is re-injected every time a stroke is drawn.
+    this.source = {
+      html: htmlContent(injectedJavaScript)
+    }; 
   }
 
   _onNavigationChange = (args) => {
