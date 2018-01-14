@@ -1,4 +1,5 @@
-var content = (penColor, backgroundColor, dataURL) => `
+export default function ({ penColor, backgroundColor, dataURL }) {
+  return `
   function executeNativeFunction(fnName, args) {
     window.location.hash = '&executeFunction<-' + fnName + '&' + '&arguments<-' + JSON.stringify(args) + '&';
   }
@@ -64,5 +65,4 @@ var content = (penColor, backgroundColor, dataURL) => `
   var canvasElement = document.querySelector('canvas');
   showSignaturePad(canvasElement, bodyWidth, bodyHeight);
 `;
-
-export default content;
+}

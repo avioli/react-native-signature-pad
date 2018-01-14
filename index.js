@@ -46,10 +46,11 @@ class SignaturePad extends Component {
       backgroundColor = StyleSheet.flatten(style);
     }
 
-    var injectedJavaScript = injectedSignaturePad + injectedApplication(
+    var injectedJavaScript = injectedSignaturePad + injectedApplication({
       penColor,
       backgroundColor,
-      dataURL);
+      dataURL
+    });
 
     // We don't use WebView's injectedJavaScript because on Android, the WebView
     // re-injects the JavaScript upon every url change. Given that we use url
