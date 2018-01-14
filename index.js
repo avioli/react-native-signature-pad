@@ -28,9 +28,7 @@ export default class SignaturePad extends Component {
   constructor (props) {
     super(props);
 
-    this.state = {
-      base64DataUrl: props.dataURL || null
-    };
+    this.state = {};
 
     let {
       style,

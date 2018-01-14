@@ -39,7 +39,7 @@ export default function ({ penColor, backgroundColor, dataURL }) {
       }; */
       signaturePad.minWidth = 1;
       signaturePad.maxWidth = 4;
-      if ('${dataURL}') {
+      if (${!!dataURL}) {
         signaturePad.fromDataURL('${dataURL}');
       }
     };
