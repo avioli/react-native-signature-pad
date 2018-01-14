@@ -1,4 +1,4 @@
-export default function ({ penColor, backgroundColor, dataURL }) {
+export default function ({ penColor, backgroundColor, dataURL, penMinWidth, penMaxWidth }) {
   return `
   window.onerror = function (message, url, line, column, error) {
     window.postMessage(JSON.stringify({ message, url, line, column, error }));
@@ -34,8 +34,8 @@ export default function ({ penColor, backgroundColor, dataURL }) {
       backgroundColor: '${backgroundColor || 'white'}',
       onEnd: sendBase64DataUrl
     });
-    signaturePad.minWidth = 1;
-    signaturePad.maxWidth = 4;
+    signaturePad.minWidth = ${penMinWidth || 1};
+    signaturePad.maxWidth = ${penMaxWidth || 4};
     if (${!!dataURL}) {
       signaturePad.fromDataURL('${dataURL}');
     }

@@ -17,7 +17,9 @@ export default class SignaturePad extends Component {
     style: ViewPropTypes.style,
     penColor: PropTypes.string,
     dataURL: PropTypes.string,
-    backgroundColor: PropTypes.string,
+    penMinWidth: PropTypes.number,
+    penMaxWidth: PropTypes.number,
+    backgroundColor: PropTypes.string
   };
 
   static defaultProps = {
@@ -41,10 +43,15 @@ export default class SignaturePad extends Component {
       backgroundColor = StyleSheet.flatten(style);
     }
 
+    penMinWidth = Math.max(isNaN(penMinWidth) ? 0.5 : parseFloat(penMinWidth), 0)
+    penMaxWidth = Math.max(isNaN(penMaxWidth) ? 2.5 : parseFloat(penMaxWidth), 0)
+
     var injectedJavaScript = injectedSignaturePad + injectedApplication({
       penColor,
       backgroundColor,
-      dataURL
+      dataURL,
+      penMinWidth,
+      penMaxWidth
     });
 
     // We don't use WebView's injectedJavaScript because on Android, the WebView
