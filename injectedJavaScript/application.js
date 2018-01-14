@@ -1,4 +1,11 @@
 var content = (penColor, backgroundColor, dataURL) => `
+  function executeNativeFunction(fnName, args) {
+    window.location.hash = '&executeFunction<-' + fnName + '&' + '&arguments<-' + JSON.stringify(args) + '&';
+  }
+
+  window.onerror = function(message, url, line, column, error) {
+    executeNativeFunction('jsError', {message: message, url: url, line: line, column: column});
+  };
 
   var showSignaturePad = function (signaturePadCanvas, bodyWidth, bodyHeight) {
     /*We're rotating by 90% -> Flip X and Y*/
