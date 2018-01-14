@@ -22,7 +22,7 @@ export default class SignaturePad extends Component {
 
   static defaultProps = {
     style: {},
-    backgroundColor: 'inherit'
+    backgroundColor: 'rgba(0,0,0,0)'
   };
 
   constructor (props) {
