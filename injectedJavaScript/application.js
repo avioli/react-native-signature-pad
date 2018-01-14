@@ -14,17 +14,11 @@ export default function ({ penColor, backgroundColor, dataURL }) {
   }
 
   var canvasElement = document.querySelector('canvas');
-  /*We're rotating by 90% -> Flip X and Y*/
-  /*var width = bodyHeight;
-  var height = bodyWidth;*/
-
-  var width = bodyWidth;
-  var height = bodyHeight;
 
   var sizeSignaturePad = function () {
     var devicePixelRatio = 1; /*window.devicePixelRatio || 1;*/
-    var canvasWidth = width * devicePixelRatio;
-    var canvasHeight = height * devicePixelRatio;
+    var canvasWidth = bodyWidth * devicePixelRatio;
+    var canvasHeight = bodyHeight * devicePixelRatio;
     canvasElement.width = canvasWidth;
     canvasElement.height = canvasHeight;
     canvasElement.getContext('2d').scale(devicePixelRatio, devicePixelRatio);
@@ -40,12 +34,6 @@ export default function ({ penColor, backgroundColor, dataURL }) {
       backgroundColor: '${backgroundColor || 'white'}',
       onEnd: sendBase64DataUrl
     });
-    /* signaturePad.translateMouseCoordinates = function (point) {
-      var translatedY = point.x;
-      var translatedX = width - point.y;
-      point.x = translatedX;
-      point.y = translatedY;
-    }; */
     signaturePad.minWidth = 1;
     signaturePad.maxWidth = 4;
     if (${!!dataURL}) {
