@@ -1,11 +1,7 @@
 export default function ({ penColor, backgroundColor, dataURL }) {
   return `
-  function executeNativeFunction(fnName, args) {
-    window.location.hash = '&executeFunction<-' + fnName + '&' + '&arguments<-' + JSON.stringify(args) + '&';
-  }
-
-  window.onerror = function(message, url, line, column, error) {
-    executeNativeFunction('jsError', {message: message, url: url, line: line, column: column});
+  window.onerror = function (message, url, line, column, error) {
+    window.postMessage(JSON.stringify({ message, url, line, column, error }));
   };
 
   var showSignaturePad = function (signaturePadCanvas, bodyWidth, bodyHeight) {
@@ -33,7 +29,7 @@ export default function ({ penColor, backgroundColor, dataURL }) {
       var signaturePad = new SignaturePad(signaturePadCanvas, {
         penColor: '${penColor || 'black'}',
         backgroundColor: '${backgroundColor || 'white'}',
-        onEnd: function() { finishedStroke(signaturePad.toDataURL()); }
+        onEnd: sendBase64DataUrl
       });
       /* signaturePad.translateMouseCoordinates = function (point) {
         var translatedY = point.x;
@@ -64,5 +60,12 @@ export default function ({ penColor, backgroundColor, dataURL }) {
 
   var canvasElement = document.querySelector('canvas');
   showSignaturePad(canvasElement, bodyWidth, bodyHeight);
+
+  function sendBase64DataUrl () {
+    var payload = {
+      base64DataUrl: signaturePad.toDataURL()
+    };
+    window.postMessage(JSON.stringify(payload));
+  }
 `;
 }

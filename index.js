@@ -58,87 +58,51 @@ export default class SignaturePad extends Component {
     }; 
   }
 
-  _onNavigationChange = (args) => {
-    this._parseMessageFromWebViewNavigationChange(unescape(args.url));
-  };
-
-  _parseMessageFromWebViewNavigationChange = (newUrl) => {
-    //Example input:
-    //applewebdata://4985ECDA-4C2B-4E37-87ED-0070D14EB985#executeFunction=jsError&arguments=%7B%22message%22:%22ReferenceError:%20Can't%20find%20variable:%20WHADDUP%22,%22url%22:%22applewebdata://4985ECDA-4C2B-4E37-87ED-0070D14EB985%22,%22line%22:340,%22column%22:10%7D"
-    //All parameters to the native world are passed via a hash url where every parameter is passed as &[ParameterName]<-[Content]&
-    var hashUrlIndex = newUrl.lastIndexOf('#');
-    if (hashUrlIndex === -1) {
-      return;
-    }
-
-    var hashUrl = newUrl.substring(hashUrlIndex);
-    hashUrl = decodeURIComponent(hashUrl);
-    var regexFindAllSubmittedParameters = /&(.*?)&/g;
-
-    var parameters = {};
-    var parameterMatch = regexFindAllSubmittedParameters.exec(hashUrl);
-    if (!parameterMatch) {
-      return;
-    }
-
-    while(parameterMatch) {
-      var parameterPair = parameterMatch[1]; //For example executeFunction=jsError or arguments=...
-
-      var parameterPairSplit = parameterPair.split('<-');
-      if (parameterPairSplit.length === 2) {
-        parameters[parameterPairSplit[0]] = parameterPairSplit[1];
-      }
-
-      parameterMatch = regexFindAllSubmittedParameters.exec(hashUrl);
-    }
-
-    if (!this._attemptToExecuteNativeFunctionFromWebViewMessage(parameters)) {
-      logger.warn({parameters, hashUrl}, 'Received an unknown set of parameters from WebView');
-    }
-  };
-
-  _attemptToExecuteNativeFunctionFromWebViewMessage = (message) => {
-    if (message.executeFunction && message.arguments) {
-      var parsedArguments = JSON.parse(message.arguments);
-
-      var referencedFunction = this['_bridged_' + message.executeFunction];
-      if (typeof(referencedFunction) === 'function') {
-        referencedFunction.apply(this, [parsedArguments]);
-        return true;
-      }
-    }
-
-    return false;
-  };
-
-  _bridged_jsError = (args) => {
-    if (this.props.onError) this.props.onError({details: args});
-  };
-
-  _bridged_finishedStroke = ({base64DataUrl}) => {
-    if (this.props.onChange) this.props.onChange({base64DataUrl});
-    this.setState({base64DataUrl});
-  };
-
-  _renderError = (args) => {
-    if (this.props.onError) this.props.onError({details: args});
-  };
-
-  _renderLoading = (args) => {
-
-  };
-
   render () {
     return (
       <WebView
         automaticallyAdjustContentInsets={false}
-        onNavigationStateChange={this._onNavigationChange}
-        renderError={this._renderError}
-        renderLoading={this._renderLoading}
+        onMessage={this._onMessage}
         source={this.source}
+        scrollEnabled={false}
         javaScriptEnabled={true}
         style={this.props.style}
       />
     )
+  }
+
+  _onMessage = (event) => {
+    let data;
+    try {
+      data = JSON.parse(event.nativeEvent.data);
+    } catch (err) {
+      this._jsError(err);
+      return;
+    }
+
+    if (!data) return;
+
+    if (data['error']) {
+      this._jsError(data['error'], data);
+      return;
+    }
+
+    if (data['base64DataUrl']) {
+      this._finishedStroke(data);
+      return;
+    }
+
+    // NOTE: catch-all
+    console.warn('Signature-pad: data', data);
+  }
+
+  _jsError = (err, args) => {
+    if (!this.props.onError) return;
+    this.props.onError({ err, details: args });
+  }
+
+  _finishedStroke = ({ base64DataUrl }) => {
+    if (!this.props.onChange) return;
+    this.props.onChange({ base64DataUrl });
   }
 }
