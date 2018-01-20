@@ -1,5 +1,5 @@
 export default function ({ sendChangeEvents, penColor, backgroundColor, dataURL, penMinWidth, penMaxWidth, pixelRatio }) {
-    return `
+    return `;function main () {
 window.onerror = function (message, url, line, column, error) {
   window.postMessage(JSON.stringify({ message, url, line, column, error }));
 };
@@ -92,6 +92,21 @@ function sendData () {
     value: signaturePad.toDataURL()
   };
   window.postMessage(JSON.stringify(payload));
+}
+
+} /* // end of main */
+
+if (window.postMessage.length !== 1) {
+  /* // NOTE: ReactNative injects its postMessage override a bit late, */
+  /* // so we have to wait for it - usually 10ms after DOMContentLoaded are enough, */
+  /* // but safe and sane default is 100ms. */
+  var waitRN = function () {
+    if (window.postMessage.length === 1) return main();
+    setTimeout(waitRN, 100);
+  };
+  window.addEventListener('DOMContentLoaded', waitRN);
+} else {
+  main();
 }
 `;
 }
