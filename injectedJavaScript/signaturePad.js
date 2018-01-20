@@ -48,7 +48,7 @@ function Bezier(startPoint, control1, control2, endPoint) {
   this.endPoint = endPoint;
 }
 
-// Returns approximated length.
+/* // Returns approximated length. */
 Bezier.prototype.length = function () {
   var steps = 10;
   var length = 0;
@@ -78,7 +78,7 @@ Bezier.prototype._point = function (t, start, c1, c2, end) {
 
 /* eslint-disable */
 
-// http://stackoverflow.com/a/27078401/815507
+/* // http://stackoverflow.com/a/27078401/815507 */
 function throttle(func, wait, options) {
   var context, args, result;
   var timeout = null;
@@ -118,7 +118,7 @@ function SignaturePad(canvas, options) {
   this.velocityFilterWeight = opts.velocityFilterWeight || 0.7;
   this.minWidth = opts.minWidth || 0.5;
   this.maxWidth = opts.maxWidth || 2.5;
-  this.throttle = 'throttle' in opts ? opts.throttle : 16; // in miliseconds
+  this.throttle = 'throttle' in opts ? opts.throttle : 16; /* // in miliseconds */
   this.minDistance = 'minDistance' in opts ? opts.minDistance : 5;
 
   if (this.throttle) {
@@ -139,8 +139,8 @@ function SignaturePad(canvas, options) {
   this._ctx = canvas.getContext('2d');
   this.clear();
 
-  // We need add these inline so they are available to unbind while still having
-  // access to 'self' we could use _.bind but it's not worth adding a dependency.
+  /* // We need add these inline so they are available to unbind while still having */
+  /* // access to 'self' we could use _.bind but it's not worth adding a dependency. */
   this._handleMouseDown = function (event) {
     if (event.which === 1) {
       self._mouseButtonDown = true;
@@ -169,7 +169,7 @@ function SignaturePad(canvas, options) {
   };
 
   this._handleTouchMove = function (event) {
-    // Prevent scrolling.
+    /* // Prevent scrolling. */
     event.preventDefault();
 
     var touch = event.targetTouches[0];
@@ -184,11 +184,11 @@ function SignaturePad(canvas, options) {
     }
   };
 
-  // Enable mouse and touch event handlers
+  /* // Enable mouse and touch event handlers */
   this.on();
 }
 
-// Public methods
+/* // Public methods */
 SignaturePad.prototype.clear = function () {
   var ctx = this._ctx;
   var canvas = this._canvas;
@@ -254,7 +254,7 @@ SignaturePad.prototype.isEmpty = function () {
   return this._isEmpty;
 };
 
-// Private methods
+/* // Private methods */
 SignaturePad.prototype._strokeBegin = function (event) {
   this._data.push([]);
   this._reset();
@@ -274,7 +274,7 @@ SignaturePad.prototype._strokeUpdate = function (event) {
   var lastPoint = lastPointGroup && lastPointGroup[lastPointGroup.length - 1];
   var isLastPointTooClose = lastPoint && point.distanceTo(lastPoint) < this.minDistance;
 
-  // Skip this point if it's too close to the previous one
+  /* // Skip this point if it's too close to the previous one */
   if (!(lastPoint && isLastPointTooClose)) {
     var _addPoint = this._addPoint(point),
         curve = _addPoint.curve,
@@ -295,7 +295,7 @@ SignaturePad.prototype._strokeUpdate = function (event) {
 
 SignaturePad.prototype._strokeEnd = function (event) {
   var canDrawCurve = this.points.length > 2;
-  var point = this.points[0]; // Point instance
+  var point = this.points[0]; /* // Point instance */
 
   if (!canDrawCurve && point) {
     this._drawDot(point);
@@ -303,10 +303,10 @@ SignaturePad.prototype._strokeEnd = function (event) {
 
   if (point) {
     var lastPointGroup = this._data[this._data.length - 1];
-    var lastPoint = lastPointGroup[lastPointGroup.length - 1]; // plain object
+    var lastPoint = lastPointGroup[lastPointGroup.length - 1]; /* // plain object */
 
-    // When drawing a dot, there's only one point in a group, so without this check
-    // such group would end up with exactly the same 2 points.
+    /* // When drawing a dot, there's only one point in a group, so without this check */
+    /* // such group would end up with exactly the same 2 points. */
     if (!point.equals(lastPoint)) {
       lastPointGroup.push({
         x: point.x,
@@ -331,7 +331,7 @@ SignaturePad.prototype._handleMouseEvents = function () {
 };
 
 SignaturePad.prototype._handleTouchEvents = function () {
-  // Pass touch events to canvas element on mobile IE11 and Edge.
+  /* // Pass touch events to canvas element on mobile IE11 and Edge. */
   this._canvas.style.msTouchAction = 'none';
   this._canvas.style.touchAction = 'none';
 
@@ -360,8 +360,8 @@ SignaturePad.prototype._addPoint = function (point) {
   points.push(point);
 
   if (points.length > 2) {
-    // To reduce the initial lag make it work with 3 points
-    // by copying the first point to the beginning.
+    /* // To reduce the initial lag make it work with 3 points */
+    /* // by copying the first point to the beginning. */
     if (points.length === 3) points.unshift(points[0]);
 
     tmp = this._calculateCurveControlPoints(points[0], points[1], points[2]);
@@ -371,8 +371,8 @@ SignaturePad.prototype._addPoint = function (point) {
     var curve = new Bezier(points[1], c2, c3, points[2]);
     var widths = this._calculateCurveWidths(curve);
 
-    // Remove the first element from the list,
-    // so that we always have no more than 4 points in points array.
+    /* // Remove the first element from the list, */
+    /* // so that we always have no more than 4 points in points array. */
     points.shift();
 
     return { curve: curve, widths: widths };
@@ -446,7 +446,7 @@ SignaturePad.prototype._drawCurve = function (curve, startWidth, endWidth) {
   ctx.beginPath();
 
   for (var i = 0; i < drawSteps; i += 1) {
-    // Calculate the Bezier (x, y) coordinate for this step.
+    /* // Calculate the Bezier (x, y) coordinate for this step. */
     var t = i / drawSteps;
     var tt = t * t;
     var ttt = tt * t;
@@ -493,16 +493,16 @@ SignaturePad.prototype._fromData = function (pointGroups, drawCurve, drawDot) {
         var color = rawPoint.color;
 
         if (j === 0) {
-          // First point in a group. Nothing to draw yet.
+          /* // First point in a group. Nothing to draw yet. */
 
-          // All points in the group have the same color, so it's enough to set
-          // penColor just at the beginning.
+          /* // All points in the group have the same color, so it's enough to set */
+          /* // penColor just at the beginning. */
           this.penColor = color;
           this._reset();
 
           this._addPoint(point);
         } else if (j !== group.length - 1) {
-          // Middle point in a group.
+          /* // Middle point in a group. */
           var _addPoint2 = this._addPoint(point),
               curve = _addPoint2.curve,
               widths = _addPoint2.widths;
@@ -511,7 +511,7 @@ SignaturePad.prototype._fromData = function (pointGroups, drawCurve, drawDot) {
             drawCurve(curve, widths, color);
           }
         } else {
-          // Last point in a group. Do nothing.
+          /* // Last point in a group. Do nothing. */
         }
       }
     } else {
@@ -540,9 +540,9 @@ SignaturePad.prototype._toSVG = function () {
   this._fromData(pointGroups, function (curve, widths, color) {
     var path = document.createElement('path');
 
-    // Need to check curve for NaN values, these pop up when drawing
-    // lines on the canvas that are not continuous. E.g. Sharp corners
-    // or stopping mid-stroke and than continuing without lifting mouse.
+    /* // Need to check curve for NaN values, these pop up when drawing */
+    /* // lines on the canvas that are not continuous. E.g. Sharp corners */
+    /* // or stopping mid-stroke and than continuing without lifting mouse. */
     if (!isNaN(curve.control1.x) && !isNaN(curve.control1.y) && !isNaN(curve.control2.x) && !isNaN(curve.control2.y)) {
       var attr = 'M ' + curve.startPoint.x.toFixed(3) + ',' + curve.startPoint.y.toFixed(3) + ' ' + ('C ' + curve.control1.x.toFixed(3) + ',' + curve.control1.y.toFixed(3) + ' ') + (curve.control2.x.toFixed(3) + ',' + curve.control2.y.toFixed(3) + ' ') + (curve.endPoint.x.toFixed(3) + ',' + curve.endPoint.y.toFixed(3));
 
@@ -569,7 +569,7 @@ SignaturePad.prototype._toSVG = function () {
   var header = '<svg' + ' xmlns="http://www.w3.org/2000/svg"' + ' xmlns:xlink="http://www.w3.org/1999/xlink"' + (' viewBox="' + minX + ' ' + minY + ' ' + maxX + ' ' + maxY + '"') + (' width="' + maxX + '"') + (' height="' + maxY + '"') + '>';
   var body = svg.innerHTML;
 
-  // IE hack for missing innerHTML property on SVGElement
+  /* // IE hack for missing innerHTML property on SVGElement */
   if (body === undefined) {
     var dummy = document.createElement('dummy');
     var nodes = svg.childNodes;
