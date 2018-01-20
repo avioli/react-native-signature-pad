@@ -81,7 +81,8 @@ function sendIsEmpty () {
 
 function sendBase64DataUrl () {
   var payload = {
-    base64DataUrl: signaturePad.toDataURL()
+    base64DataUrl: signaturePad.toDataURL(),
+    isEmpty: signaturePad.isEmpty()
   };
   window.postMessage(JSON.stringify(payload));
 }

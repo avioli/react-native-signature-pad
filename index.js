@@ -186,9 +186,9 @@ export default class SignaturePad extends Component {
     this.props.onError({ err, details: args });
   }
 
-  _finishedStroke = ({ base64DataUrl }) => {
+  _finishedStroke = ({ base64DataUrl, isEmpty }) => {
     if (!this.props.onChange) return;
-    this.props.onChange({ base64DataUrl });
+    this.props.onChange({ base64DataUrl, isEmpty });
   }
 
   _onMessage = (event) => {
